@@ -1,7 +1,13 @@
-import 'package:hive_ce_flutter/adapters.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
+
+import '../profile/profile.dart';
 
 class DatabaseService {
   static Future<void> initialize() async {
     await Hive.initFlutter();
+
+    Hive.registerAdapter(ProfileAdapter());
+
+    await Hive.openBox<Profile>('profile');
   }
 }
