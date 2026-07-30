@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'profile.dart';
+part of 'profile_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator

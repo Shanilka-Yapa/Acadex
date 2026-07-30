@@ -1,6 +1,6 @@
 import 'package:hive_ce_flutter/hive_flutter.dart';
 
-import '../profile/profile.dart';
+import '../profile/profile_model.dart';
 
 class DatabaseService {
   static Future<void> initialize() async {

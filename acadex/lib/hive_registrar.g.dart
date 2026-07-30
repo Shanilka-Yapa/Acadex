@@ -3,7 +3,7 @@
 // Check in to version control
 
 import 'package:hive_ce/hive_ce.dart';
-import 'package:acadex/profile/profile.dart';
+import 'package:acadex/profile/profile_model.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
