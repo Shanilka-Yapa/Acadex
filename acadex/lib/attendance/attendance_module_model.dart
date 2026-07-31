@@ -11,4 +11,10 @@ class AttendanceModule extends HiveObject {
   String moduleName;
 
   AttendanceModule({required this.moduleCode, required this.moduleName});
+
+  void update({required String code, required String name}) {
+    moduleCode = code;
+    moduleName = name;
+    save();
+  }
 }

@@ -247,13 +247,30 @@ class _ModulePageState extends State<ModulePage> {
                                 "${lecture.startTime.hour.toString().padLeft(2, '0')}:${lecture.startTime.minute.toString().padLeft(2, '0')} - "
                                 "${lecture.endTime.hour.toString().padLeft(2, '0')}:${lecture.endTime.minute.toString().padLeft(2, '0')}",
                               ),
-                              trailing: Icon(
-                                lecture.attended
-                                    ? Icons.check_circle
-                                    : Icons.cancel,
-                                color: lecture.attended
-                                    ? Colors.green
-                                    : Colors.red,
+                              trailing: PopupMenuButton(
+                                itemBuilder: (context) => [
+                                  const PopupMenuItem(
+                                    value: "edit",
+                                    child: Text("Edit"),
+                                  ),
+
+                                  const PopupMenuItem(
+                                    value: "delete",
+                                    child: Text("Delete"),
+                                  ),
+                                ],
+
+                                onSelected: (value) async {
+                                  if (value == "delete") {
+                                    await lecture.delete();
+                                  }
+
+                                  if (value == "edit") {
+                                    lecture.attended = !lecture.attended;
+
+                                    await lecture.save();
+                                  }
+                                },
                               ),
                             ),
                           );

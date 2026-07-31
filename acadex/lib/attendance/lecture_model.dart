@@ -28,4 +28,15 @@ class Lecture extends HiveObject {
   });
 
   double get durationHours => endTime.difference(startTime).inMinutes / 60.0;
+
+  void update({
+    required DateTime newStart,
+    required DateTime newEnd,
+    required bool status,
+  }) {
+    startTime = newStart;
+    endTime = newEnd;
+    attended = status;
+    save();
+  }
 }
