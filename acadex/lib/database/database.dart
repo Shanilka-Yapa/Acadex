@@ -11,6 +11,6 @@ class DatabaseService {
     Hive.registerAdapter(AttendanceModuleAdapter());
 
     await Hive.openBox<Profile>('profile');
-    await Hive.openBox<AttendanceModule>('attendance_modules');
+    await Hive.openBox<AttendanceModule>('attendance');
   }
 }
