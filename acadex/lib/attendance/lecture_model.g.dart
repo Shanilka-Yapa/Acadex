@@ -1,35 +1,44 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'attendance_module_model.dart';
+part of 'lecture_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class AttendanceModuleAdapter extends TypeAdapter<AttendanceModule> {
+class LectureAdapter extends TypeAdapter<Lecture> {
   @override
-  final typeId = 1;
+  final typeId = 2;
 
   @override
-  AttendanceModule read(BinaryReader reader) {
+  Lecture read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return AttendanceModule(
-      moduleCode: fields[0] as String,
-      moduleName: fields[1] as String,
+    return Lecture(
+      moduleKey: (fields[0] as num).toInt(),
+      date: fields[1] as DateTime,
+      startTime: fields[2] as DateTime,
+      endTime: fields[3] as DateTime,
+      attended: fields[4] as bool,
     );
   }
 
   @override
-  void write(BinaryWriter writer, AttendanceModule obj) {
+  void write(BinaryWriter writer, Lecture obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(5)
       ..writeByte(0)
-      ..write(obj.moduleCode)
+      ..write(obj.moduleKey)
       ..writeByte(1)
-      ..write(obj.moduleName);
+      ..write(obj.date)
+      ..writeByte(2)
+      ..write(obj.startTime)
+      ..writeByte(3)
+      ..write(obj.endTime)
+      ..writeByte(4)
+      ..write(obj.attended);
   }
 
   @override
@@ -38,7 +47,7 @@ class AttendanceModuleAdapter extends TypeAdapter<AttendanceModule> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is AttendanceModuleAdapter &&
+      other is LectureAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

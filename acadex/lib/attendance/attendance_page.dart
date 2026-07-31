@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 
 import 'attendance_module_model.dart';
+import 'module_page.dart';
 
 class AttendancePage extends StatefulWidget {
   const AttendancePage({super.key});
@@ -14,34 +15,43 @@ class _AttendancePageState extends State<AttendancePage> {
   final moduleController = TextEditingController();
 
   void addModule() {
+    final codeController = TextEditingController();
+    final nameController = TextEditingController();
+
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text("Add Module"),
-          content: TextField(
-            controller: moduleController,
-            decoration: const InputDecoration(labelText: "Module Name"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: codeController,
+                decoration: const InputDecoration(labelText: "Module Code"),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: "Module Name"),
+              ),
+            ],
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(context),
               child: const Text("Cancel"),
             ),
-
             ElevatedButton(
               onPressed: () async {
-                final name = moduleController.text.trim();
+                final code = codeController.text.trim();
+                final name = nameController.text.trim();
 
-                if (name.isEmpty) return;
+                if (code.isEmpty || name.isEmpty) return;
 
-                final box = Hive.box<AttendanceModule>('attendance');
-
-                await box.add(AttendanceModule(moduleName: name));
-
-                moduleController.clear();
+                await Hive.box<AttendanceModule>(
+                  'attendance',
+                ).add(AttendanceModule(moduleCode: code, moduleName: name));
 
                 if (!mounted) return;
 
@@ -78,9 +88,29 @@ class _AttendancePageState extends State<AttendancePage> {
 
                 return Card(
                   child: ListTile(
-                    title: Text(module.moduleName),
-                    subtitle: const Text("Attendance: 0%"),
+                    title: Text(module.moduleCode),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(module.moduleName),
+                        const SizedBox(height: 4),
+                        const Text("Attendance: 0%"),
+                        const Text("0 / 0 Hours"),
+                      ],
+                    ),
                     trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ModulePage(
+                            module: module,
+                            moduleKey: box.keyAt(index) as int,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 );
               },
