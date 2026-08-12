@@ -3,6 +3,7 @@
 // Check in to version control
 
 import 'package:hive_ce/hive_ce.dart';
+import 'package:acadex/assignment/assignment_model.dart';
 import 'package:acadex/attendance/attendance_module_model.dart';
 import 'package:acadex/attendance/lecture_model.dart';
 import 'package:acadex/gpa/gpa_module_model.dart';
@@ -12,6 +13,7 @@ import 'package:acadex/timetable/timetable_model.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
+    registerAdapter(AssignmentAdapter());
     registerAdapter(AttendanceModuleAdapter());
     registerAdapter(GpaModuleAdapter());
     registerAdapter(LectureAdapter());
@@ -24,6 +26,7 @@ extension HiveRegistrar on HiveInterface {
 
 extension IsolatedHiveRegistrar on IsolatedHiveInterface {
   void registerAdapters() {
+    registerAdapter(AssignmentAdapter());
     registerAdapter(AttendanceModuleAdapter());
     registerAdapter(GpaModuleAdapter());
     registerAdapter(LectureAdapter());

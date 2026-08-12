@@ -322,7 +322,7 @@ class _TimetablePageState extends State<TimetablePage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     DropdownButtonFormField<TimetableModule>(
-                      value: selectedModule,
+                      initialValue: selectedModule,
                       decoration: const InputDecoration(labelText: 'Module'),
                       items: modules.map((module) {
                         return DropdownMenuItem(
@@ -342,7 +342,7 @@ class _TimetablePageState extends State<TimetablePage> {
                     const SizedBox(height: 12),
 
                     DropdownButtonFormField<String>(
-                      value: selectedDayName,
+                      initialValue: selectedDayName,
                       decoration: const InputDecoration(labelText: 'Day'),
                       items: days.map((day) {
                         return DropdownMenuItem(value: day, child: Text(day));
@@ -486,7 +486,7 @@ class _TimetablePageState extends State<TimetablePage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     DropdownButtonFormField<TimetableModule>(
-                      value: selectedModule,
+                      initialValue: selectedModule,
                       decoration: const InputDecoration(labelText: 'Module'),
                       items: modules.map((module) {
                         return DropdownMenuItem(
@@ -506,7 +506,7 @@ class _TimetablePageState extends State<TimetablePage> {
                     const SizedBox(height: 12),
 
                     DropdownButtonFormField<String>(
-                      value: selectedDayName,
+                      initialValue: selectedDayName,
                       decoration: const InputDecoration(labelText: 'Day'),
                       items: days.map((day) {
                         return DropdownMenuItem(value: day, child: Text(day));

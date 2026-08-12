@@ -5,6 +5,7 @@ import '../attendance/attendance_page.dart';
 import '../gpa/gpa.dart';
 import '../profile/profile_model.dart';
 import '../timetable/timetable.dart';
+import '../assignment/assignment.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -48,6 +49,7 @@ class DashboardPage extends StatelessWidget {
             icon: Icons.assignment_outlined,
             title: 'Assignments',
             subtitle: 'No assignments',
+            page: const AssignmentPage(),
           ),
 
           _dashboardCard(

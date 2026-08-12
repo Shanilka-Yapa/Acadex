@@ -64,7 +64,7 @@ class _SemesterPageState extends State<SemesterPage> {
                     ),
 
                     DropdownButtonFormField(
-                      value: grade,
+                      initialValue: grade,
 
                       items: gradePoints.keys
                           .map(
@@ -314,7 +314,7 @@ class _SemesterPageState extends State<SemesterPage> {
                                                     DropdownButtonFormField<
                                                       String
                                                     >(
-                                                      value: grade,
+                                                      initialValue: grade,
                                                       items: gradePoints.keys
                                                           .map(
                                                             (g) =>

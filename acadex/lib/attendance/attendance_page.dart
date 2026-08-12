@@ -48,7 +48,7 @@ class _AttendancePageState extends State<AttendancePage> {
                   children: [
                     if (timetableModules.isNotEmpty)
                       DropdownButtonFormField<String>(
-                        value: otherModule
+                        initialValue: otherModule
                             ? "other"
                             : selectedModule!.key.toString(),
 
