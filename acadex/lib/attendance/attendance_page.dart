@@ -4,6 +4,7 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'attendance_module_model.dart';
 import 'lecture_model.dart';
 import 'module_page.dart';
+import '../timetable/timetable_model.dart';
 
 class AttendancePage extends StatefulWidget {
   const AttendancePage({super.key});
@@ -13,61 +14,142 @@ class AttendancePage extends StatefulWidget {
 }
 
 class _AttendancePageState extends State<AttendancePage> {
+
+  TimetableModule? selectedTimetableModule;
+  bool useOtherModule = false;
+
   void addModule() {
     final codeController = TextEditingController();
     final nameController = TextEditingController();
 
+    final timetableBox = Hive.box<TimetableModule>('timetableModules');
+
+    final attendanceBox = Hive.box<AttendanceModule>('attendance');
+
+    final timetableModules = timetableBox.values.toList();
+
+    TimetableModule? selectedModule = timetableModules.isNotEmpty
+        ? timetableModules.first
+        : null;
+
+    bool otherModule = timetableModules.isEmpty;
+
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text("Add Module"),
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: const Text("Add Module"),
 
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: codeController,
-                decoration: const InputDecoration(labelText: "Module Code"),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (timetableModules.isNotEmpty)
+                      DropdownButtonFormField<String>(
+                        value: otherModule
+                            ? "other"
+                            : selectedModule!.key.toString(),
+
+                        decoration: const InputDecoration(
+                          labelText: "Select Module",
+                        ),
+
+                        items: [
+                          ...timetableModules.map((module) {
+                            return DropdownMenuItem<String>(
+                              value: module.key.toString(),
+                              child: Text("${module.code} - ${module.name}"),
+                            );
+                          }),
+
+                          const DropdownMenuItem<String>(
+                            value: "other",
+                            child: Text("Other"),
+                          ),
+                        ],
+
+                        onChanged: (value) {
+                          setDialogState(() {
+                            if (value == "other") {
+                              otherModule = true;
+                              selectedModule = null;
+                            } else {
+                              otherModule = false;
+
+                              selectedModule = timetableModules.firstWhere(
+                                (module) => module.key.toString() == value,
+                              );
+
+                              codeController.text = selectedModule!.code;
+
+                              nameController.text = selectedModule!.name;
+                            }
+                          });
+                        },
+                      ),
+
+                    if (timetableModules.isNotEmpty) const SizedBox(height: 16),
+
+                    if (otherModule) ...[
+                      TextField(
+                        controller: codeController,
+                        decoration: const InputDecoration(
+                          labelText: "Module Code",
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      TextField(
+                        controller: nameController,
+                        decoration: const InputDecoration(
+                          labelText: "Module Name",
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
               ),
 
-              const SizedBox(height: 12),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Cancel"),
+                ),
 
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(labelText: "Module Name"),
-              ),
-            ],
-          ),
+                ElevatedButton(
+                  onPressed: () async {
+                    String code;
+                    String name;
 
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("Cancel"),
-            ),
+                    if (otherModule) {
+                      code = codeController.text.trim();
+                      name = nameController.text.trim();
 
-            ElevatedButton(
-              onPressed: () async {
-                final code = codeController.text.trim();
-                final name = nameController.text.trim();
+                      if (code.isEmpty || name.isEmpty) {
+                        return;
+                      }
+                    } else {
+                      code = selectedModule!.code;
+                      name = selectedModule!.name;
+                    }
 
-                if (code.isEmpty || name.isEmpty) return;
+                    await attendanceBox.add(
+                      AttendanceModule(moduleCode: code, moduleName: name),
+                    );
 
-                await Hive.box<AttendanceModule>(
-                  'attendance',
-                ).add(AttendanceModule(moduleCode: code, moduleName: name));
+                    if (!mounted) return;
 
-                if (!mounted) return;
-
-                Navigator.pop(context);
-                setState(() {});
-              },
-
-              child: const Text("Add"),
-            ),
-          ],
+                    Navigator.pop(context);
+                    setState(() {});
+                  },
+                  child: const Text("Add"),
+                ),
+              ],
+            );
+          },
         );
       },
     );
