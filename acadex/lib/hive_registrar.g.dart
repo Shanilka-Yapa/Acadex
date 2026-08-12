@@ -8,6 +8,7 @@ import 'package:acadex/attendance/lecture_model.dart';
 import 'package:acadex/gpa/gpa_module_model.dart';
 import 'package:acadex/gpa/semester_model.dart';
 import 'package:acadex/profile/profile_model.dart';
+import 'package:acadex/timetable/timetable_model.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
@@ -16,6 +17,8 @@ extension HiveRegistrar on HiveInterface {
     registerAdapter(LectureAdapter());
     registerAdapter(ProfileAdapter());
     registerAdapter(SemesterAdapter());
+    registerAdapter(TimetableModuleAdapter());
+    registerAdapter(TimetableSlotAdapter());
   }
 }
 
@@ -26,5 +29,7 @@ extension IsolatedHiveRegistrar on IsolatedHiveInterface {
     registerAdapter(LectureAdapter());
     registerAdapter(ProfileAdapter());
     registerAdapter(SemesterAdapter());
+    registerAdapter(TimetableModuleAdapter());
+    registerAdapter(TimetableSlotAdapter());
   }
 }

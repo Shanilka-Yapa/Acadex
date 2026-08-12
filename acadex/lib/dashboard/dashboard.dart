@@ -4,6 +4,7 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 import '../attendance/attendance_page.dart';
 import '../gpa/gpa.dart';
 import '../profile/profile_model.dart';
+import '../timetable/timetable.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -61,6 +62,7 @@ class DashboardPage extends StatelessWidget {
             icon: Icons.schedule,
             title: 'Timetable',
             subtitle: 'No timetable',
+            page: const TimetablePage(),
           ),
         ],
       ),

@@ -5,6 +5,7 @@ import '../profile/profile_model.dart';
 import '../attendance/lecture_model.dart';
 import '../gpa/semester_model.dart';
 import '../gpa/gpa_module_model.dart';
+import '../timetable/timetable_model.dart';
 
 class DatabaseService {
   static Future<void> initialize() async {
@@ -15,11 +16,15 @@ class DatabaseService {
     Hive.registerAdapter(LectureAdapter());
     Hive.registerAdapter(SemesterAdapter());
     Hive.registerAdapter(GpaModuleAdapter());
+    Hive.registerAdapter(TimetableModuleAdapter());
+    Hive.registerAdapter(TimetableSlotAdapter());
 
     await Hive.openBox<Profile>('profile');
     await Hive.openBox<AttendanceModule>('attendance');
     await Hive.openBox<Lecture>('lectures');
     await Hive.openBox<Semester>('semesters');
     await Hive.openBox<GpaModule>('gpaModules');
+    await Hive.openBox<TimetableModule>('timetableModules');
+    await Hive.openBox<TimetableSlot>('timetableSlots');
   }
 }
