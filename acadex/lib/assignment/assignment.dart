@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 
+import '../app.dart';
+import '../ui/acadex_visuals.dart';
 import 'assignment_model.dart';
 import '../timetable/timetable_model.dart';
 
@@ -652,16 +654,35 @@ class _AssignmentPageState extends State<AssignmentPage> {
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
       child: ListTile(
-        leading: Checkbox(
-          value: false,
-          onChanged: (_) {
-            completeAssignment(assignment);
-          },
+        leading: SizedBox(
+          width: 88,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AcadexIconChip(
+                icon: assignment.assignmentType == 'Take Home'
+                    ? Icons.event_note_rounded
+                    : Icons.quiz_rounded,
+                backgroundColor: assignment.assignmentType == 'Take Home'
+                    ? AcadexApp.secondaryPurple
+                    : AcadexApp.accentCyan,
+                size: 40,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              const SizedBox(width: 6),
+              Checkbox(
+                value: false,
+                onChanged: (_) {
+                  completeAssignment(assignment);
+                },
+              ),
+            ],
+          ),
         ),
 
         title: Text(
           assignment.title,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: Theme.of(context).textTheme.titleLarge,
         ),
 
         subtitle: Column(
@@ -762,7 +783,9 @@ class _AssignmentPageState extends State<AssignmentPage> {
           padding: const EdgeInsets.only(top: 16, bottom: 8),
           child: Text(
             dateHeading(date),
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(letterSpacing: 0.8),
           ),
         ),
 
@@ -793,14 +816,16 @@ class _AssignmentPageState extends State<AssignmentPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Assignments')),
 
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: FloatingActionButton(
         onPressed: addAssignment,
-        icon: const Icon(Icons.add),
-        label: const Text('Add Assignment'),
+        child: const Icon(Icons.add),
       ),
 
       body: assignments.isEmpty
-          ? const Center(child: Text('No assignments'))
+          ? const AcadexEmptyState(
+              icon: Icons.assignment_outlined,
+              title: 'No assignments',
+            )
           : ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: dates.length,

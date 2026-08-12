@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 
+import '../app.dart';
+import '../ui/acadex_visuals.dart';
 import 'semester_model.dart';
 import 'gpa_module_model.dart';
 import 'grade_points.dart';
@@ -93,7 +95,7 @@ class _GpaPageState extends State<GpaPage> {
               // Overall GPA Card
               Card(
                 child: Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(22),
                   child: Builder(
                     builder: (_) {
                       overallNum = 0;
@@ -121,18 +123,35 @@ class _GpaPageState extends State<GpaPage> {
                           ? 0
                           : overallNum / overallDen;
 
-                      return Column(
+                      return Row(
                         children: [
-                          const Text(
-                            "Overall GPA",
-                            style: TextStyle(fontSize: 18),
+                          AcadexIconChip(
+                            icon: Icons.analytics_rounded,
+                            backgroundColor: AcadexApp.accentCyan,
+                            size: 56,
+                            borderRadius: BorderRadius.circular(18),
                           ),
-                          const SizedBox(height: 10),
-                          Text(
-                            cgpa.toStringAsFixed(2),
-                            style: const TextStyle(
-                              fontSize: 34,
-                              fontWeight: FontWeight.bold,
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Overall GPA",
+                                  style: Theme.of(context).textTheme.titleMedium
+                                      ?.copyWith(
+                                        letterSpacing: 1.1,
+                                        color: AcadexApp.textSecondary,
+                                      ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  cgpa.toStringAsFixed(2),
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.headlineLarge,
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -168,6 +187,12 @@ class _GpaPageState extends State<GpaPage> {
 
                 return Card(
                   child: ListTile(
+                    leading: AcadexIconChip(
+                      icon: Icons.school_rounded,
+                      backgroundColor: AcadexApp.primaryBlue,
+                      size: 44,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                     title: Text("Semester ${semester.semesterNo}"),
                     subtitle: Text(
                       "Weight: ${semester.weight}\nGPA: ${gpa.toStringAsFixed(2)}",

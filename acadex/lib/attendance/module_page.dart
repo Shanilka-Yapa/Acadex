@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 
+import '../app.dart';
+import '../ui/acadex_visuals.dart';
 import 'lecture_model.dart';
 import 'attendance_module_model.dart';
 
@@ -202,24 +204,43 @@ class _ModulePageState extends State<ModulePage> {
                 padding: const EdgeInsets.all(16),
                 child: Card(
                   child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
+                    padding: const EdgeInsets.all(18),
+                    child: Row(
                       children: [
-                        Text(
-                          "${attendance.toStringAsFixed(2)}%",
-                          style: const TextStyle(
-                            fontSize: 34,
-                            fontWeight: FontWeight.bold,
+                        AcadexIconChip(
+                          icon: Icons.event_available_rounded,
+                          backgroundColor: attendance >= 75
+                              ? AcadexApp.success
+                              : AcadexApp.warning,
+                          size: 56,
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+
+                        const SizedBox(width: 16),
+
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "${attendance.toStringAsFixed(2)}%",
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.headlineLarge,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                "Present Hours : ${presentHours.toStringAsFixed(1)}",
+                              ),
+                              Text(
+                                "Absent Hours : ${absentHours.toStringAsFixed(1)}",
+                              ),
+                              Text(
+                                "Total Hours : ${totalHours.toStringAsFixed(1)}",
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 12),
-                        Text(
-                          "Present Hours : ${presentHours.toStringAsFixed(1)}",
-                        ),
-                        Text(
-                          "Absent Hours : ${absentHours.toStringAsFixed(1)}",
-                        ),
-                        Text("Total Hours : ${totalHours.toStringAsFixed(1)}"),
                       ],
                     ),
                   ),
@@ -228,7 +249,10 @@ class _ModulePageState extends State<ModulePage> {
 
               Expanded(
                 child: lectures.isEmpty
-                    ? const Center(child: Text("No lectures added"))
+                    ? const AcadexEmptyState(
+                        icon: Icons.schedule_rounded,
+                        title: "No lectures added",
+                      )
                     : ListView.builder(
                         itemCount: lectures.length,
                         itemBuilder: (context, index) {
@@ -240,6 +264,16 @@ class _ModulePageState extends State<ModulePage> {
                               vertical: 6,
                             ),
                             child: ListTile(
+                              leading: AcadexIconChip(
+                                icon: lecture.attended
+                                    ? Icons.check_rounded
+                                    : Icons.close_rounded,
+                                backgroundColor: lecture.attended
+                                    ? AcadexApp.success
+                                    : AcadexApp.warning,
+                                size: 42,
+                                borderRadius: BorderRadius.circular(14),
+                              ),
                               title: Text(
                                 lecture.date.toString().split(" ")[0],
                               ),

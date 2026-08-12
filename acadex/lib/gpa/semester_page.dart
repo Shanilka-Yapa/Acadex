@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 
+import '../app.dart';
+import '../ui/acadex_visuals.dart';
 import 'semester_model.dart';
 import 'gpa_module_model.dart';
 import 'grade_points.dart';
@@ -191,23 +193,40 @@ class _SemesterPageState extends State<SemesterPage> {
                 margin: const EdgeInsets.all(16),
 
                 child: Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(22),
 
-                  child: Column(
+                  child: Row(
                     children: [
-                      const Text(
-                        "Semester GPA",
-                        style: TextStyle(fontSize: 18),
+                      AcadexIconChip(
+                        icon: Icons.auto_graph_rounded,
+                        backgroundColor: AcadexApp.secondaryPurple,
+                        size: 56,
+                        borderRadius: BorderRadius.circular(18),
                       ),
 
-                      const SizedBox(height: 10),
+                      const SizedBox(width: 16),
 
-                      Text(
-                        calculateGpa().toStringAsFixed(2),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Semester GPA",
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(
+                                    letterSpacing: 1.0,
+                                    color: AcadexApp.textSecondary,
+                                  ),
+                            ),
 
-                        style: const TextStyle(
-                          fontSize: 35,
-                          fontWeight: FontWeight.bold,
+                            const SizedBox(height: 8),
+
+                            Text(
+                              calculateGpa().toStringAsFixed(2),
+
+                              style: Theme.of(context).textTheme.headlineLarge,
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -217,7 +236,10 @@ class _SemesterPageState extends State<SemesterPage> {
 
               Expanded(
                 child: modules.isEmpty
-                    ? const Center(child: Text("No modules added"))
+                    ? const AcadexEmptyState(
+                        icon: Icons.book_outlined,
+                        title: "No modules added",
+                      )
                     : ListView.builder(
                         itemCount: modules.length,
 
@@ -231,6 +253,12 @@ class _SemesterPageState extends State<SemesterPage> {
                             ),
 
                             child: ListTile(
+                              leading: AcadexIconChip(
+                                icon: Icons.menu_book_rounded,
+                                backgroundColor: AcadexApp.accentCyan,
+                                size: 42,
+                                borderRadius: BorderRadius.circular(14),
+                              ),
                               title: Text(module.moduleCode),
 
                               subtitle: Text(

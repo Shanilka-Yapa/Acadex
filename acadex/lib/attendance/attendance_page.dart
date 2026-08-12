@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 
+import '../app.dart';
+import '../ui/acadex_visuals.dart';
 import 'attendance_module_model.dart';
 import 'lecture_model.dart';
 import 'module_page.dart';
@@ -14,7 +16,6 @@ class AttendancePage extends StatefulWidget {
 }
 
 class _AttendancePageState extends State<AttendancePage> {
-
   TimetableModule? selectedTimetableModule;
   bool useOtherModule = false;
 
@@ -169,7 +170,10 @@ class _AttendancePageState extends State<AttendancePage> {
       ),
 
       body: box.isEmpty
-          ? const Center(child: Text("No modules added"))
+          ? const AcadexEmptyState(
+              icon: Icons.how_to_reg_rounded,
+              title: "No modules added",
+            )
           : ListView.builder(
               padding: const EdgeInsets.all(16),
 
@@ -201,9 +205,17 @@ class _AttendancePageState extends State<AttendancePage> {
                   margin: const EdgeInsets.only(bottom: 12),
 
                   child: ListTile(
+                    leading: AcadexIconChip(
+                      icon: Icons.fact_check_rounded,
+                      backgroundColor: percentage >= 75
+                          ? AcadexApp.success
+                          : AcadexApp.primaryBlue,
+                      size: 44,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                     title: Text(
                       module.moduleCode,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
 
                     subtitle: Column(
@@ -225,10 +237,7 @@ class _AttendancePageState extends State<AttendancePage> {
 
                     trailing: PopupMenuButton(
                       itemBuilder: (context) => [
-                        const PopupMenuItem(
-                          value: "edit",
-                          child: Text("Edit"),
-                        ),
+                        const PopupMenuItem(value: "edit", child: Text("Edit")),
 
                         const PopupMenuItem(
                           value: "delete",

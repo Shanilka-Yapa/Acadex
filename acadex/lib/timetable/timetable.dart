@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 
+import '../ui/acadex_visuals.dart';
 import 'timetable_model.dart';
 
 class TimetablePage extends StatefulWidget {
@@ -45,15 +46,11 @@ class _TimetablePageState extends State<TimetablePage> {
     'Sunday',
   ];
 
-  final moduleColors = [
-    Colors.blue,
-    Colors.green,
-    Colors.orange,
-    Colors.purple,
-    Colors.red,
-    Colors.teal,
-    Colors.indigo,
-    Colors.pink,
+  final moduleColors = const [
+    Color(0xFF2563EB),
+    Color(0xFF1D4ED8),
+    Color(0xFF7C3AED),
+    Color(0xFF06B6D4),
   ];
 
   String formatTime(DateTime time) {
@@ -617,7 +614,12 @@ class _TimetablePageState extends State<TimetablePage> {
   Widget moduleCard(TimetableModule module) {
     return Card(
       child: ListTile(
-        leading: CircleAvatar(backgroundColor: Color(module.colorValue)),
+        leading: AcadexIconChip(
+          icon: Icons.book_rounded,
+          backgroundColor: Color(module.colorValue),
+          size: 42,
+          borderRadius: BorderRadius.circular(14),
+        ),
         title: Text(module.code),
         subtitle: Text(module.name),
         trailing: PopupMenuButton<String>(
@@ -643,10 +645,15 @@ class _TimetablePageState extends State<TimetablePage> {
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
       child: ListTile(
-        leading: CircleAvatar(backgroundColor: Color(module.colorValue)),
+        leading: AcadexIconChip(
+          icon: Icons.schedule_rounded,
+          backgroundColor: Color(module.colorValue),
+          size: 42,
+          borderRadius: BorderRadius.circular(14),
+        ),
         title: Text(
           module.code,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: Theme.of(context).textTheme.titleLarge,
         ),
         subtitle: Text(
           '${module.name}\n'
@@ -715,10 +722,12 @@ class _TimetablePageState extends State<TimetablePage> {
             ),
 
       body: selectedSemester == null
-          ? Center(
-              child: ElevatedButton.icon(
+          ? AcadexEmptyState(
+              icon: Icons.school_rounded,
+              title: 'Select Semester',
+              action: ElevatedButton.icon(
                 onPressed: selectSemester,
-                icon: const Icon(Icons.school),
+                icon: const Icon(Icons.school_rounded),
                 label: const Text('Select Semester'),
               ),
             )
@@ -729,23 +738,13 @@ class _TimetablePageState extends State<TimetablePage> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Semester $selectedSemester',
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          OutlinedButton.icon(
-                            onPressed: addModule,
-                            icon: const Icon(Icons.add),
-                            label: const Text('Module'),
-                          ),
-                        ],
+                      child: AcadexSectionHeader(
+                        title: 'Semester $selectedSemester',
+                        action: OutlinedButton.icon(
+                          onPressed: addModule,
+                          icon: const Icon(Icons.add),
+                          label: const Text('Module'),
+                        ),
                       ),
                     ),
 
@@ -794,11 +793,9 @@ class _TimetablePageState extends State<TimetablePage> {
 
                     Expanded(
                       child: slots.isEmpty
-                          ? Center(
-                              child: Text(
-                                'No classes on '
-                                '$selectedDayName',
-                              ),
+                          ? AcadexEmptyState(
+                              icon: Icons.event_busy_rounded,
+                              title: 'No classes on $selectedDayName',
                             )
                           : ListView.builder(
                               padding: const EdgeInsets.all(16),
