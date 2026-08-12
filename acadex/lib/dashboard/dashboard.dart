@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 
 import '../attendance/attendance_page.dart';
-
+import '../gpa/gpa.dart';
 import '../profile/profile_model.dart';
 
 class DashboardPage extends StatelessWidget {
@@ -29,14 +29,16 @@ class DashboardPage extends StatelessWidget {
             context: context,
             icon: Icons.school,
             title: 'GPA',
-            subtitle: 'No modules added',
+            subtitle: 'No semesters added',
+            page: const GpaPage(),
+            
           ),
 
           _dashboardCard(
             context: context,
             icon: Icons.check_circle_outline,
             title: 'Attendance',
-            subtitle: 'No modules added',
+            subtitle: 'No attendance records',
             page: const AttendancePage(),
           ),
 

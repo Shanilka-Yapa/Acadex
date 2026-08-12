@@ -3,6 +3,8 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 import '../attendance/attendance_module_model.dart';
 import '../profile/profile_model.dart';
 import '../attendance/lecture_model.dart';
+import '../gpa/semester_model.dart';
+import '../gpa/gpa_module_model.dart';
 
 class DatabaseService {
   static Future<void> initialize() async {
@@ -11,9 +13,13 @@ class DatabaseService {
     Hive.registerAdapter(ProfileAdapter());
     Hive.registerAdapter(AttendanceModuleAdapter());
     Hive.registerAdapter(LectureAdapter());
+    Hive.registerAdapter(SemesterAdapter());
+    Hive.registerAdapter(GpaModuleAdapter());
 
     await Hive.openBox<Profile>('profile');
     await Hive.openBox<AttendanceModule>('attendance');
     await Hive.openBox<Lecture>('lectures');
+    await Hive.openBox<Semester>('semesters');
+    await Hive.openBox<GpaModule>('gpaModules');
   }
 }

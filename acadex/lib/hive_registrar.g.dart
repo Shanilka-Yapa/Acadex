@@ -5,20 +5,26 @@
 import 'package:hive_ce/hive_ce.dart';
 import 'package:acadex/attendance/attendance_module_model.dart';
 import 'package:acadex/attendance/lecture_model.dart';
+import 'package:acadex/gpa/gpa_module_model.dart';
+import 'package:acadex/gpa/semester_model.dart';
 import 'package:acadex/profile/profile_model.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
     registerAdapter(AttendanceModuleAdapter());
+    registerAdapter(GpaModuleAdapter());
     registerAdapter(LectureAdapter());
     registerAdapter(ProfileAdapter());
+    registerAdapter(SemesterAdapter());
   }
 }
 
 extension IsolatedHiveRegistrar on IsolatedHiveInterface {
   void registerAdapters() {
     registerAdapter(AttendanceModuleAdapter());
+    registerAdapter(GpaModuleAdapter());
     registerAdapter(LectureAdapter());
     registerAdapter(ProfileAdapter());
+    registerAdapter(SemesterAdapter());
   }
 }
