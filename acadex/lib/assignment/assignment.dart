@@ -60,7 +60,7 @@ class _AssignmentPageState extends State<AssignmentPage> {
   }
 
   Future<TimeOfDay?> selectTime({TimeOfDay? initialTime}) async {
-    return showTimePicker(
+    return showAcadexTimePicker(
       context: context,
       initialTime: initialTime ?? const TimeOfDay(hour: 8, minute: 0),
     );
@@ -114,12 +114,17 @@ class _AssignmentPageState extends State<AssignmentPage> {
 
                       DropdownButtonFormField<TimetableModule?>(
                         initialValue: selectedModule,
+                        isExpanded: true,
                         decoration: const InputDecoration(labelText: 'Module'),
                         items: [
                           ...timetableModules.map(
                             (module) => DropdownMenuItem<TimetableModule?>(
                               value: module,
-                              child: Text('${module.code} - ${module.name}'),
+                              child: Text(
+                                '${module.code} - ${module.name}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ),
                           const DropdownMenuItem<TimetableModule?>(
@@ -652,32 +657,34 @@ class _AssignmentPageState extends State<AssignmentPage> {
     final eventTime = assignment.startTime ?? assignment.deadline;
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: ListTile(
-        leading: SizedBox(
-          width: 88,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AcadexIconChip(
-                icon: assignment.assignmentType == 'Take Home'
-                    ? Icons.event_note_rounded
-                    : Icons.quiz_rounded,
-                backgroundColor: assignment.assignmentType == 'Take Home'
-                    ? AcadexApp.secondaryPurple
-                    : AcadexApp.accentCyan,
-                size: 40,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              const SizedBox(width: 6),
-              Checkbox(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        leading: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AcadexIconChip(
+              icon: assignment.assignmentType == 'Take Home'
+                  ? Icons.event_note_rounded
+                  : Icons.quiz_rounded,
+              backgroundColor: assignment.assignmentType == 'Take Home'
+                  ? AcadexApp.secondaryPurple
+                  : AcadexApp.accentCyan,
+              size: 38,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            const SizedBox(width: 4),
+            Transform.scale(
+              scale: 0.9,
+              child: Checkbox(
                 value: false,
+                visualDensity: VisualDensity.compact,
                 onChanged: (_) {
                   completeAssignment(assignment);
                 },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
 
         title: Text(
@@ -816,9 +823,9 @@ class _AssignmentPageState extends State<AssignmentPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Assignments')),
 
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: AcadexGlassFab(
         onPressed: addAssignment,
-        child: const Icon(Icons.add),
+        tooltip: 'Add Assignment',
       ),
 
       body: assignments.isEmpty

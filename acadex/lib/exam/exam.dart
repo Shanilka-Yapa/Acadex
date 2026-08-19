@@ -52,7 +52,7 @@ class _ExamPageState extends State<ExamPage> {
   }
 
   Future<TimeOfDay?> selectTime({TimeOfDay? initialTime}) {
-    return showTimePicker(
+    return showAcadexTimePicker(
       context: context,
       initialTime: initialTime ?? const TimeOfDay(hour: 8, minute: 0),
     );
@@ -89,12 +89,17 @@ class _ExamPageState extends State<ExamPage> {
                     children: [
                       DropdownButtonFormField<TimetableModule?>(
                         initialValue: selectedModule,
+                        isExpanded: true,
                         decoration: const InputDecoration(labelText: 'Module'),
                         items: [
                           ...modules.map((module) {
                             return DropdownMenuItem<TimetableModule?>(
                               value: module,
-                              child: Text('${module.code} - ${module.name}'),
+                              child: Text(
+                                '${module.code} - ${module.name}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             );
                           }),
                           const DropdownMenuItem<TimetableModule?>(
@@ -290,33 +295,35 @@ class _ExamPageState extends State<ExamPage> {
 
   Widget examCard(Exam exam) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: ListTile(
-        leading: SizedBox(
-          width: 88,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AcadexIconChip(
-                icon: Icons.menu_book_rounded,
-                backgroundColor: exam.date == null
-                    ? AcadexApp.warning
-                    : AcadexApp.primaryBlue,
-                size: 40,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              const SizedBox(width: 6),
-              Checkbox(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        leading: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AcadexIconChip(
+              icon: Icons.menu_book_rounded,
+              backgroundColor: exam.date == null
+                  ? AcadexApp.warning
+                  : AcadexApp.primaryBlue,
+              size: 38,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            const SizedBox(width: 4),
+            Transform.scale(
+              scale: 0.9,
+              child: Checkbox(
                 value: false,
+                visualDensity: VisualDensity.compact,
                 onChanged: (_) {
                   completeExam(exam);
                 },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
 
-        title: Text(exam.module, style: Theme.of(context).textTheme.titleLarge),
+        title: Text(exam.module, style: Theme.of(context).textTheme.titleMedium),
 
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -330,7 +337,7 @@ class _ExamPageState extends State<ExamPage> {
           ],
         ),
 
-        isThreeLine: true,
+        isThreeLine: exam.startTime != null || exam.endTime != null,
 
         trailing: PopupMenuButton<String>(
           onSelected: (value) {
@@ -371,9 +378,9 @@ class _ExamPageState extends State<ExamPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Exams')),
 
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: AcadexGlassFab(
         onPressed: addExam,
-        child: const Icon(Icons.add),
+        tooltip: 'Add Exam',
       ),
 
       body: allExams.isEmpty

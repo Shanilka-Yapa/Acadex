@@ -31,8 +31,9 @@ class _ModulePageState extends State<ModulePage> {
             return AlertDialog(
               title: const Text("Add Lecture"),
 
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                 children: [
                   ListTile(
                     title: Text(
@@ -65,9 +66,9 @@ class _ModulePageState extends State<ModulePage> {
                     ),
                     trailing: const Icon(Icons.access_time),
                     onTap: () async {
-                      final time = await showTimePicker(
+                      final time = await showAcadexTimePicker(
                         context: context,
-                        initialTime: TimeOfDay.now(),
+                        initialTime: startTime ?? TimeOfDay.now(),
                       );
 
                       if (time != null) {
@@ -84,9 +85,9 @@ class _ModulePageState extends State<ModulePage> {
                     ),
                     trailing: const Icon(Icons.access_time),
                     onTap: () async {
-                      final time = await showTimePicker(
+                      final time = await showAcadexTimePicker(
                         context: context,
-                        initialTime: TimeOfDay.now(),
+                        initialTime: endTime ?? TimeOfDay.now(),
                       );
 
                       if (time != null) {
@@ -108,6 +109,7 @@ class _ModulePageState extends State<ModulePage> {
                   ),
                 ],
               ),
+            ),
 
               actions: [
                 TextButton(
@@ -170,9 +172,9 @@ class _ModulePageState extends State<ModulePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget.module.moduleCode)),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: AcadexGlassFab(
         onPressed: addLecture,
-        child: const Icon(Icons.add),
+        tooltip: 'Add Lecture',
       ),
       body: ValueListenableBuilder(
         valueListenable: Hive.box<Lecture>('lectures').listenable(),

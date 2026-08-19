@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 
+import '../app.dart';
 import '../ui/acadex_visuals.dart';
 import 'timetable_model.dart';
 
@@ -231,7 +232,10 @@ class _TimetablePageState extends State<TimetablePage> {
   }
 
   Future<TimeOfDay?> pickTime(TimeOfDay initialTime) {
-    return showTimePicker(context: context, initialTime: initialTime);
+    return showAcadexTimePicker(
+      context: context,
+      initialTime: initialTime,
+    );
   }
 
   DateTime timeToDateTime(TimeOfDay time) {
@@ -320,11 +324,16 @@ class _TimetablePageState extends State<TimetablePage> {
                   children: [
                     DropdownButtonFormField<TimetableModule>(
                       initialValue: selectedModule,
+                      isExpanded: true,
                       decoration: const InputDecoration(labelText: 'Module'),
                       items: modules.map((module) {
                         return DropdownMenuItem(
                           value: module,
-                          child: Text('${module.code} - ${module.name}'),
+                          child: Text(
+                            '${module.code} - ${module.name}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         );
                       }).toList(),
                       onChanged: (value) {
@@ -484,11 +493,16 @@ class _TimetablePageState extends State<TimetablePage> {
                   children: [
                     DropdownButtonFormField<TimetableModule>(
                       initialValue: selectedModule,
+                      isExpanded: true,
                       decoration: const InputDecoration(labelText: 'Module'),
                       items: modules.map((module) {
                         return DropdownMenuItem(
                           value: module,
-                          child: Text('${module.code} - ${module.name}'),
+                          child: Text(
+                            '${module.code} - ${module.name}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         );
                       }).toList(),
                       onChanged: (value) {
@@ -613,28 +627,63 @@ class _TimetablePageState extends State<TimetablePage> {
 
   Widget moduleCard(TimetableModule module) {
     return Card(
-      child: ListTile(
-        leading: AcadexIconChip(
-          icon: Icons.book_rounded,
-          backgroundColor: Color(module.colorValue),
-          size: 42,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        title: Text(module.code),
-        subtitle: Text(module.name),
-        trailing: PopupMenuButton<String>(
-          onSelected: (value) {
-            if (value == 'edit') {
-              editModule(module);
-            }
+      margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        child: Row(
+          children: [
+            AcadexIconChip(
+              icon: Icons.book_rounded,
+              backgroundColor: Color(module.colorValue),
+              size: 38,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    module.code,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    module.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: AcadexApp.secondaryText,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            PopupMenuButton<String>(
+              iconSize: 20,
+              splashRadius: 0.1,
+              padding: EdgeInsets.zero,
+              onSelected: (value) {
+                if (value == 'edit') {
+                  editModule(module);
+                }
 
-            if (value == 'delete') {
-              deleteModule(module);
-            }
-          },
-          itemBuilder: (_) => const [
-            PopupMenuItem(value: 'edit', child: Text('Edit')),
-            PopupMenuItem(value: 'delete', child: Text('Delete')),
+                if (value == 'delete') {
+                  deleteModule(module);
+                }
+              },
+              itemBuilder: (_) => const [
+                PopupMenuItem(value: 'edit', child: Text('Edit')),
+                PopupMenuItem(value: 'delete', child: Text('Delete')),
+              ],
+            ),
           ],
         ),
       ),
@@ -643,8 +692,9 @@ class _TimetablePageState extends State<TimetablePage> {
 
   Widget slotCard(TimetableSlot slot, TimetableModule module) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: AcadexIconChip(
           icon: Icons.schedule_rounded,
           backgroundColor: Color(module.colorValue),
@@ -653,15 +703,33 @@ class _TimetablePageState extends State<TimetablePage> {
         ),
         title: Text(
           module.code,
-          style: Theme.of(context).textTheme.titleLarge,
+          style: const TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 16,
+          ),
         ),
-        subtitle: Text(
-          '${module.name}\n'
-          '${formatTime(slot.startTime)} - '
-          '${formatTime(slot.endTime)}',
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 2),
+            Text(
+              module.name,
+              style: const TextStyle(color: AcadexApp.mainText, fontSize: 13),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '${formatTime(slot.startTime)} - ${formatTime(slot.endTime)}',
+              style: const TextStyle(
+                color: AcadexApp.primaryAccent,
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+              ),
+            ),
+          ],
         ),
         isThreeLine: true,
         trailing: PopupMenuButton<String>(
+          splashRadius: 0.1,
           onSelected: (value) {
             if (value == 'edit') {
               editSlot(slot);
@@ -716,9 +784,9 @@ class _TimetablePageState extends State<TimetablePage> {
 
       floatingActionButton: selectedSemester == null
           ? null
-          : FloatingActionButton(
+          : AcadexGlassFab(
               onPressed: addSlot,
-              child: const Icon(Icons.add),
+              tooltip: 'Add Time Slot',
             ),
 
       body: selectedSemester == null
@@ -740,24 +808,24 @@ class _TimetablePageState extends State<TimetablePage> {
                       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                       child: AcadexSectionHeader(
                         title: 'Semester $selectedSemester',
-                        action: OutlinedButton.icon(
+                        action: AcadexGlassButton(
                           onPressed: addModule,
-                          icon: const Icon(Icons.add),
-                          label: const Text('Module'),
+                          icon: Icons.add,
+                          label: 'Module',
                         ),
                       ),
                     ),
 
                     if (modules.isNotEmpty)
                       SizedBox(
-                        height: 100,
+                        height: 72,
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           itemCount: modules.length,
                           itemBuilder: (context, index) {
                             return SizedBox(
-                              width: 180,
+                              width: 200,
                               child: moduleCard(modules[index]),
                             );
                           },

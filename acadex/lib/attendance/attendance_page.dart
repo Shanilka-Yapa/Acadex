@@ -52,19 +52,21 @@ class _AttendancePageState extends State<AttendancePage> {
                         initialValue: otherModule
                             ? "other"
                             : selectedModule!.key.toString(),
-
+                        isExpanded: true,
                         decoration: const InputDecoration(
                           labelText: "Select Module",
                         ),
-
                         items: [
                           ...timetableModules.map((module) {
                             return DropdownMenuItem<String>(
                               value: module.key.toString(),
-                              child: Text("${module.code} - ${module.name}"),
+                              child: Text(
+                                "${module.code} - ${module.name}",
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             );
                           }),
-
                           const DropdownMenuItem<String>(
                             value: "other",
                             child: Text("Other"),
@@ -164,205 +166,223 @@ class _AttendancePageState extends State<AttendancePage> {
     return Scaffold(
       appBar: AppBar(title: const Text("Attendance")),
 
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: AcadexGlassFab(
         onPressed: addModule,
-        child: const Icon(Icons.add),
+        tooltip: 'Add Module',
       ),
 
-      body: box.isEmpty
-          ? const AcadexEmptyState(
+      body: ValueListenableBuilder(
+        valueListenable: box.listenable(),
+        builder: (context, _, __) {
+          if (box.isEmpty) {
+            return const AcadexEmptyState(
               icon: Icons.how_to_reg_rounded,
               title: "No modules added",
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
+            );
+          }
 
-              itemCount: box.length,
+          return ValueListenableBuilder(
+            valueListenable: lectureBox.listenable(),
+            builder: (context, _, __) {
+              return ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                itemCount: box.length,
+                itemBuilder: (context, index) {
+                  final module = box.getAt(index)!;
 
-              itemBuilder: (context, index) {
-                final module = box.getAt(index)!;
+                  double totalHours = 0;
+                  double presentHours = 0;
 
-                double totalHours = 0;
-                double presentHours = 0;
+                  final lectures = lectureBox.values
+                      .where((lecture) => lecture.moduleKey == box.keyAt(index))
+                      .toList();
 
-                final lectures = lectureBox.values
-                    .where((lecture) => lecture.moduleKey == box.keyAt(index))
-                    .toList();
+                  for (var lecture in lectures) {
+                    totalHours += lecture.durationHours;
 
-                for (var lecture in lectures) {
-                  totalHours += lecture.durationHours;
-
-                  if (lecture.attended) {
-                    presentHours += lecture.durationHours;
+                    if (lecture.attended) {
+                      presentHours += lecture.durationHours;
+                    }
                   }
-                }
 
-                final percentage = totalHours == 0
-                    ? 0
-                    : (presentHours / totalHours) * 100;
+                  final percentage = totalHours == 0
+                      ? 0
+                      : (presentHours / totalHours) * 100;
 
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 12),
-
-                  child: ListTile(
-                    leading: AcadexIconChip(
-                      icon: Icons.fact_check_rounded,
-                      backgroundColor: percentage >= 75
-                          ? AcadexApp.success
-                          : AcadexApp.primaryBlue,
-                      size: 44,
-                      borderRadius: BorderRadius.circular(16),
+                  return Card(
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 6,
                     ),
-                    title: Text(
-                      module.moduleCode,
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-
-                      children: [
-                        Text(module.moduleName),
-
-                        const SizedBox(height: 4),
-
-                        Text("Attendance: ${percentage.toStringAsFixed(1)}%"),
-
-                        Text(
-                          "${presentHours.toStringAsFixed(1)} / "
-                          "${totalHours.toStringAsFixed(1)} Hours",
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      leading: AcadexIconChip(
+                        icon: Icons.fact_check_rounded,
+                        backgroundColor: percentage >= 75
+                            ? AcadexApp.success
+                            : AcadexApp.primaryBlue,
+                        size: 42,
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      title: Text(
+                        module.moduleCode,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
                         ),
-                      ],
-                    ),
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 2),
+                          Text(
+                            module.moduleName,
+                            style: const TextStyle(
+                              color: AcadexApp.mainText,
+                              fontSize: 13,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Text(
+                                "${percentage.toStringAsFixed(1)}%",
+                                style: TextStyle(
+                                  color: percentage >= 75
+                                      ? AcadexApp.success
+                                      : AcadexApp.error,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                "(${presentHours.toStringAsFixed(1)} / ${totalHours.toStringAsFixed(1)} hrs)",
+                                style: const TextStyle(
+                                  color: AcadexApp.secondaryText,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      isThreeLine: true,
+                      trailing: PopupMenuButton(
+                        itemBuilder: (context) => [
+                          const PopupMenuItem(value: "edit", child: Text("Edit")),
+                          const PopupMenuItem(
+                            value: "delete",
+                            child: Text("Delete"),
+                          ),
+                        ],
+                        onSelected: (value) async {
+                          if (value == "delete") {
+                            final confirm = await showDialog<bool>(
+                              context: context,
+                              builder: (_) => AlertDialog(
+                                title: const Text("Delete Module?"),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, false);
+                                    },
+                                    child: const Text("Cancel"),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, true);
+                                    },
+                                    child: const Text("Delete"),
+                                  ),
+                                ],
+                              ),
+                            );
 
-                    trailing: PopupMenuButton(
-                      itemBuilder: (context) => [
-                        const PopupMenuItem(value: "edit", child: Text("Edit")),
-
-                        const PopupMenuItem(
-                          value: "delete",
-                          child: Text("Delete"),
-                        ),
-                      ],
-
-                      onSelected: (value) async {
-                        if (value == "delete") {
-                          final lectureBox = Hive.box<Lecture>('lectures');
-
-                          for (final lecture in lectureBox.values) {
-                            if (lecture.moduleKey == box.keyAt(index)) {
-                              await lecture.delete();
+                            if (confirm == true) {
+                              for (final lecture in lectureBox.values.toList()) {
+                                if (lecture.moduleKey == box.keyAt(index)) {
+                                  await lecture.delete();
+                                }
+                              }
+                              await module.delete();
                             }
                           }
 
-                          final confirm = await showDialog<bool>(
-                            context: context,
-                            builder: (_) => AlertDialog(
-                              title: const Text("Delete Module?"),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context, false);
-                                  },
-                                  child: const Text("Cancel"),
-                                ),
+                          if (value == "edit") {
+                            final codeController = TextEditingController(
+                              text: module.moduleCode,
+                            );
 
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.pop(context, true);
-                                  },
-                                  child: const Text("Delete"),
-                                ),
-                              ],
-                            ),
-                          );
+                            final nameController = TextEditingController(
+                              text: module.moduleName,
+                            );
 
-                          if (confirm == true) {
-                            await module.delete();
+                            if (!context.mounted) return;
 
-                            setState(() {});
-                          }
-
-                          setState(() {});
-                        }
-
-                        if (value == "edit") {
-                          final codeController = TextEditingController(
-                            text: module.moduleCode,
-                          );
-
-                          final nameController = TextEditingController(
-                            text: module.moduleName,
-                          );
-
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: const Text("Edit Module"),
-
-                                content: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    TextField(
-                                      controller: codeController,
-                                      decoration: const InputDecoration(
-                                        labelText: "Module Code",
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text("Edit Module"),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      TextField(
+                                        controller: codeController,
+                                        decoration: const InputDecoration(
+                                          labelText: "Module Code",
+                                        ),
                                       ),
-                                    ),
-
-                                    TextField(
-                                      controller: nameController,
-                                      decoration: const InputDecoration(
-                                        labelText: "Module Name",
+                                      TextField(
+                                        controller: nameController,
+                                        decoration: const InputDecoration(
+                                          labelText: "Module Name",
+                                        ),
                                       ),
+                                    ],
+                                  ),
+                                  actions: [
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        module.moduleCode = codeController.text;
+                                        module.moduleName = nameController.text;
+                                        await module.save();
+
+                                        if (!context.mounted) return;
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text("Save"),
                                     ),
                                   ],
-                                ),
-
-                                actions: [
-                                  ElevatedButton(
-                                    onPressed: () async {
-                                      module.moduleCode = codeController.text;
-
-                                      module.moduleName = nameController.text;
-
-                                      await module.save();
-
-                                      if (!mounted) return;
-
-                                      Navigator.pop(context);
-
-                                      setState(() {});
-                                    },
-
-                                    child: const Text("Save"),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        }
+                                );
+                              },
+                            );
+                          }
+                        },
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ModulePage(
+                              module: module,
+                              moduleKey: box.keyAt(index) as int,
+                            ),
+                          ),
+                        );
                       },
                     ),
-
-                    onTap: () {
-                      Navigator.push(
-                        context,
-
-                        MaterialPageRoute(
-                          builder: (_) => ModulePage(
-                            module: module,
-
-                            moduleKey: box.keyAt(index) as int,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
+                  );
+                },
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

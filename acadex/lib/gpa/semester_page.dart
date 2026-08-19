@@ -51,6 +51,7 @@ class _SemesterPageState extends State<SemesterPage> {
                         labelText: "Module Code",
                       ),
                     ),
+                    const SizedBox(height: 14),
 
                     TextField(
                       controller: nameController,
@@ -58,12 +59,14 @@ class _SemesterPageState extends State<SemesterPage> {
                         labelText: "Module Name",
                       ),
                     ),
+                    const SizedBox(height: 14),
 
                     TextField(
                       controller: creditController,
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(labelText: "Credits"),
                     ),
+                    const SizedBox(height: 14),
 
                     DropdownButtonFormField(
                       initialValue: grade,
@@ -173,10 +176,9 @@ class _SemesterPageState extends State<SemesterPage> {
     return Scaffold(
       appBar: AppBar(title: Text("Semester ${widget.semester.semesterNo}")),
 
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: AcadexGlassFab(
         onPressed: addModule,
-
-        child: const Icon(Icons.add),
+        tooltip: 'Add Module',
       ),
 
       body: ValueListenableBuilder(
@@ -314,6 +316,7 @@ class _SemesterPageState extends State<SemesterPage> {
                                                                 "Module Code",
                                                           ),
                                                     ),
+                                                    const SizedBox(height: 14),
 
                                                     TextField(
                                                       controller:
@@ -324,6 +327,7 @@ class _SemesterPageState extends State<SemesterPage> {
                                                                 "Module Name",
                                                           ),
                                                     ),
+                                                    const SizedBox(height: 14),
 
                                                     TextField(
                                                       controller:
@@ -338,6 +342,7 @@ class _SemesterPageState extends State<SemesterPage> {
                                                                 "Credits",
                                                           ),
                                                     ),
+                                                    const SizedBox(height: 14),
 
                                                     DropdownButtonFormField<
                                                       String
